@@ -1,0 +1,97 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.container {
+  display: inline-block;
+  position: relative;
+  margin: 10px;
+}
+
+.table {
+  border: 2px solid #47aae7;
+  border-collapse: separate;
+  border-spacing: 4px;
+  cursor: default;
+  table-layout: fixed;
+}
+
+.cell {
+  background-color: #47aae7;
+  padding: 0;
+}
+
+button {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 2px solid #FFFFFF;
+  position: absolute;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  font-size: 24px;
+  color: #FFFFFF;
+  box-sizing: content-box;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.addRow,
+.addColumn {
+  background-color: #f3a62f;
+}
+
+.addRow {
+  margin-left: 8px;
+}
+
+.addColumn {
+  right: 0;
+  margin-top: 8px;
+}
+
+.addRow:hover,
+.addColumn:hover {
+  background-color: #f6c052;
+}
+
+.removeRow,
+.removeColumn {
+  background-color: #b33122;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.removeRow {
+  left: 0;
+  margin-top: 4px;
+}
+
+.removeColumn {
+  top: 0;
+  margin-left: 4px;
+}
+
+.removeRow:hover,
+.removeColumn:hover {
+  background-color: #ca4c49;
+}
+
+.removeRow.visibility:hover,
+.removeColumn.visibility:hover {
+  opacity: 1;
+  visibility: visible;
+}
+
+.table:hover ~ .removeRow.visibility,
+.table:hover ~ .removeColumn.visibility {
+  opacity: 1;
+  visibility: visible;
+}
