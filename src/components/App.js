@@ -11,8 +11,8 @@ class App extends Component {
     this.state = {
       table: [],
       index: {
-        rowInd: 0,
-        columnInd: 0
+        currentRowInd: 0,
+        currentColumnInd: 0
       },
       visibility: {
         rowShow: false,
@@ -32,29 +32,39 @@ class App extends Component {
   }
 
   buttonAddRow = () => {
-    let tableArr = [...this.state.table, Array(this.state.table[0].length).fill(null)];
 
-    this.setState({table: [...tableArr]});
+    this.setState(({ table: prevTable }) => {
+      const tableArr = [...prevTable, Array(prevTable[0].length).fill(null)];
+      return {table: [...tableArr]}
+    });
   };
 
   buttonAddColumn = () => {
-    let tableArr = this.state.table.map((item) => {
-      return [...item, null]
-    });
 
-    this.setState({table: [...tableArr]});
+    this.setState(({ table: prevTable }) => {
+      const tableArr = prevTable.map((item) => {
+        return [...item, null]
+      });
+      return {table: [...tableArr]}
+    });
   };
 
   buttonRemoveRow = () => {
-    let { table, index } = this.state;
 
-    if (table.length <= 1) return;
+    this.setState((prevState) => {
+      const {
+        table: prevTable,
+        index: {
+          currentRowInd: prevCurrentRowInd,
+          currentColumnInd: prevCurrentColumnInd
+        }} = prevState;
 
-    let tableArr = table.filter((item, i) => {
-      return i !== index.rowInd;
-    });
+      if (prevTable.length <= 1) return prevState;
 
-    this.setState(({ index: { rowInd: prevRowInd, columnInd: prevColumnInd }}) => {
+      const tableArr = prevTable.filter((item, i) => {
+        return i !== prevCurrentRowInd;
+      });
+
       return {
         table: [...tableArr],
         visibility: {
@@ -62,51 +72,76 @@ class App extends Component {
           columnShow: false
         },
         index: {
-          rowInd: (tableArr.length === prevRowInd) ? prevRowInd - 1 : prevRowInd,
-          columnInd: prevColumnInd
+          currentRowInd:
+            (tableArr.length === prevCurrentRowInd)
+              ? prevCurrentRowInd - 1
+              : prevCurrentRowInd,
+          currentColumnInd: prevCurrentColumnInd
         }
       }
     })
   };
 
   buttonRemoveColumn = () => {
-    let { table, index } = this.state;
 
-    if(table[0].length <= 1) return;
+    this.setState((prevState) => {
 
-    let tableMass = table.map((item) => {
-      return item.filter((el, j) => {
-        return j !== index.columnInd;
-      })
-    });
+      const {
+        table: prevTable,
+        index: {
+          currentRowInd: prevCurrentRowInd,
+          currentColumnInd: prevCurrentColumnInd
+        }} = prevState;
 
-    this.setState(({ index: { rowInd: prevRowInd, columnInd: prevColumnInd }}) => {
+      if(prevTable[0].length <= 1) return prevState;
+
+      const tableArr = prevTable.map((item) => {
+        return item.filter((el, j) => {
+          return j !== prevCurrentColumnInd;
+        })
+      });
+
       return {
-        table: [...tableMass],
+        table: [...tableArr],
         visibility: {
           rowShow: false,
-          columnShow: (tableMass[0].length > 1)
+          columnShow: (tableArr[0].length > 1)
         },
         index: {
-          rowInd: prevRowInd,
-          columnInd: (tableMass[0].length === prevColumnInd) ? prevColumnInd - 1 : prevColumnInd
+          currentRowInd: prevCurrentRowInd,
+          currentColumnInd:
+            (tableArr[0].length === prevCurrentColumnInd)
+              ? prevCurrentColumnInd - 1
+              : prevCurrentColumnInd
         }
       }
     })
   };
 
   mouseOver = (e) => {
-    let event = e.target;
-    let newRowIndex = event.parentElement.rowIndex;
-    let newColumnIndex = event.cellIndex;
+    const event = e.target;
+    const newRowIndex = event.parentElement.rowIndex;
+    const newColumnIndex = event.cellIndex;
 
     if(newRowIndex == null || newColumnIndex == null) return;
 
-    this.setState(({ index: { rowInd: prevRowInd, column: prevColumnInd }, table: prevTable }) => {
+    this.setState(({
+                     index: {
+                       currentRowInd: prevCurrentRowInd,
+                       currentColumnInd: prevCurrentColumnInd
+                     },
+                     table: prevTable
+                   }) => {
       return {
         index: {
-          rowInd: (newRowIndex === prevRowInd)? prevRowInd : newRowIndex,
-          columnInd: (newColumnIndex === prevColumnInd)? prevColumnInd : newColumnIndex
+          currentRowInd:
+            (newRowIndex === prevCurrentRowInd)
+              ? prevCurrentRowInd
+              : newRowIndex,
+          currentColumnInd:
+            (newColumnIndex === prevCurrentColumnInd)
+              ? prevCurrentColumnInd
+              : newColumnIndex
         },
         visibility: {
           rowShow: (prevTable.length > 1),

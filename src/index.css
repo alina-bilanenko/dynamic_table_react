@@ -38,60 +38,60 @@ button {
   box-sizing: content-box;
 }
 
-.button:focus {
+button:focus {
   outline: none;
 }
 
-.addRow,
-.addColumn {
+.add-row,
+.add-column {
   background-color: #f3a62f;
 }
 
-.addRow {
+.add-row {
   margin-left: 8px;
 }
 
-.addColumn {
+.add-column {
   right: 0;
   margin-top: 8px;
 }
 
-.addRow:hover,
-.addColumn:hover {
+.add-row:hover,
+.add-column:hover {
   background-color: #f6c052;
 }
 
-.removeRow,
-.removeColumn {
+.remove-row,
+.remove-column {
   background-color: #b33122;
-  visibility: visible;
-  opacity: 1;
+  visibility: hidden;
+  opacity: 0;
   transition: all 0.3s ease-in-out;
 }
 
-.removeRow {
+.remove-row {
   left: 0;
   margin-top: 4px;
 }
 
-.removeColumn {
+.remove-column {
   top: 0;
   margin-left: 4px;
 }
 
-.removeRow:hover,
-.removeColumn:hover {
+.remove-row:hover,
+.remove-column:hover {
   background-color: #ca4c49;
 }
 
-.removeRow.visibility:hover,
-.removeColumn.visibility:hover {
+.remove-row.visibility:hover,
+.remove-column.visibility:hover {
   opacity: 1;
   visibility: visible;
 }
 
-.table:hover ~ .removeRow.visibility,
-.table:hover ~ .removeColumn.visibility {
+.table:hover ~ .remove-row.visibility,
+.table:hover ~ .remove-column.visibility {
   opacity: 1;
   visibility: visible;
 }

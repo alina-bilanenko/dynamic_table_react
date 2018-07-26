@@ -6,9 +6,9 @@ export const DynamicTable = ({ cellSize, table, mouseOver }) => {
   return (
     <table className="table" onMouseOver={mouseOver}>
       <tbody>
-      {table.map((item, key) =>
+      {table.map((item, key) => (
         <tr key={key} className="row">
-          {item.map((el, i) =>
+          {item.map((el, i) => (
             <td key={i}
                 style={{
                   width: cellSize,
@@ -16,9 +16,9 @@ export const DynamicTable = ({ cellSize, table, mouseOver }) => {
                 }}
                 className="cell"
             />
-          )}
+          ))}
         </tr>
-      )}
+      ))}
       </tbody>
     </table>
   )

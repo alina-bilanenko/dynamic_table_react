@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 
 export const Button = ({
                          index: {
-                           rowInd,
-                           columnInd
+                           currentRowInd,
+                           currentColumnInd
                          },
                          visibility: {
                            rowShow,
@@ -17,12 +17,11 @@ export const Button = ({
                          buttonRemoveColumn
                        }) => {
 
-  const rowPosition = (rowInd + 1) * (cellSize + 4);
-  const columnPosition = (columnInd + 1) * (cellSize + 4);
-
+  const rowPosition = (currentRowInd + 1) * (cellSize + 4);
+  const columnPosition = (currentColumnInd + 1) * (cellSize + 4);
   return (
     <Fragment>
-      <button className='addRow'
+      <button className='add-row'
               style={{
                 width: cellSize,
                 height: cellSize,
@@ -32,7 +31,7 @@ export const Button = ({
       >
         +
       </button>
-      <button className='addColumn'
+      <button className='add-column'
               style={{
                 width: cellSize,
                 height: cellSize,
@@ -42,7 +41,7 @@ export const Button = ({
       >
         +
       </button>
-      <button className={[rowShow? 'visibility': '', 'removeRow'].join(' ')}
+      <button className={[rowShow? 'visibility': '', 'remove-row'].join(' ')}
               style={{
                 width: cellSize,
                 height: cellSize,
@@ -52,7 +51,7 @@ export const Button = ({
       >
         -
       </button>
-      <button className={[columnShow? 'visibility': '', 'removeColumn'].join(' ')}
+      <button className={[columnShow? 'visibility': '', 'remove-column'].join(' ')}
               style={{
                 width: cellSize,
                 height: cellSize,
@@ -67,8 +66,8 @@ export const Button = ({
 };
 
 Button.propTypes = {
-  rowInd: PropTypes.number,
-  columnInd: PropTypes.number,
+  currentRowInd: PropTypes.number,
+  currentColumnInd: PropTypes.number,
   rowShow: PropTypes.bool,
   columnShow: PropTypes.bool,
   buttonAddRow: PropTypes.func,
