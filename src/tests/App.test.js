@@ -56,8 +56,9 @@ describe('App.buttonRemoveRow', () => {
   it('Should not remove row from the state table if it is left alone', () => {
     const wrapper = shallow(<App/>);
     const instance = wrapper.instance();
-    instance.state.table.length = 1;
+    instance.initialHeight = 1;
 
+    instance.componentDidMount();
     instance.buttonRemoveRow();
 
     expect(instance.state.table.length).toBe(1);
@@ -80,15 +81,14 @@ describe('App.buttonRemoveColumn', () => {
   it('Should not remove column from the state table if it is left alone', () => {
     const wrapper = shallow(<App/>);
     const instance = wrapper.instance();
+    instance.initialWidth = 1;
 
-    instance.state.table.forEach(tableRow => {
-      tableRow.length = 1;
-    });
-
+    instance.componentDidMount();
     instance.buttonRemoveColumn();
 
     instance.state.table.forEach(tableRow => {
       expect(tableRow.length).toBe(1);
     });
+
   })
 });
