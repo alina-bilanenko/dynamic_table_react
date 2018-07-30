@@ -3,156 +3,110 @@ import { DynamicTable } from "./DynamicTable"
 import { Button } from "./Button"
 
 class App extends Component {
-  constructor () {
-    super();
-    this.initialWidth = 4;
-    this.initialHeight = 4;
-    this.cellSize = 50;
+  constructor (props) {
+    super(props);
+    this.initialWidth = props.initialWidth;
+    this.initialHeight = props.initialHeight;
+    this.cellSize = props.cellSize;
     this.state = {
-      table: [],
-      index: {
-        currentRowInd: 0,
-        currentColumnInd: 0
-      },
-      visibility: {
-        rowShow: false,
-        columnShow: false
-      }
+      table: this.buildTableArray(),
+      currentRowInd: 0,
+      currentColumnInd: 0,
+      rowVisibility: false,
+      columnVisibility: false
     }
   }
 
-  componentDidMount () {
+  buildTableArray () {
     let tableArr = [];
 
     for(let i = 0; i < this.initialHeight; i++) {
       tableArr.push(Array(this.initialWidth).fill(null));
     }
 
-    this.setState({table: [...tableArr]})
+    return [...tableArr];
   }
 
   buttonAddRow = () => {
+    const { table } = this.state;
+    const tableArr = [...table, Array(table[0].length).fill(null)];
 
-    this.setState(({ table: prevTable }) => {
-      const tableArr = [...prevTable, Array(prevTable[0].length).fill(null)];
-      return {table: [...tableArr]}
-    });
+    this.setState({ table: [...tableArr] });
   };
 
   buttonAddColumn = () => {
-
-    this.setState(({ table: prevTable }) => {
-      const tableArr = prevTable.map((item) => {
-        return [...item, null]
-      });
-      return {table: [...tableArr]}
+    const { table } = this.state;
+    const tableArr = table.map((item) => {
+      return [...item, null]
     });
+
+    this.setState({ table: [...tableArr] });
   };
 
   buttonRemoveRow = () => {
+    const { table, currentRowInd } = this.state;
 
-    this.setState((prevState) => {
-      const {
-        table: prevTable,
-        index: {
-          currentRowInd: prevCurrentRowInd,
-          currentColumnInd: prevCurrentColumnInd
-        }} = prevState;
+    if (table.length <= 1) return;
 
-      if (prevTable.length <= 1) return prevState;
+    const tableArr = table.filter((item, i) => {
+      return i !== currentRowInd;
+    });
 
-      const tableArr = prevTable.filter((item, i) => {
-        return i !== prevCurrentRowInd;
-      });
+    const newCurrentRowInd =
+      (tableArr.length === currentRowInd)
+        ? currentRowInd - 1
+        : currentRowInd;
 
-      return {
-        table: [...tableArr],
-        visibility: {
-          rowShow: (tableArr.length > 1),
-          columnShow: false
-        },
-        index: {
-          currentRowInd:
-            (tableArr.length === prevCurrentRowInd)
-              ? prevCurrentRowInd - 1
-              : prevCurrentRowInd,
-          currentColumnInd: prevCurrentColumnInd
-        }
-      }
-    })
+    this.setState({
+      table: [...tableArr],
+      rowVisibility: (tableArr.length > 1),
+      currentRowInd: newCurrentRowInd
+    });
   };
 
   buttonRemoveColumn = () => {
+    const { table, currentColumnInd } = this.state;
 
-    this.setState((prevState) => {
+    if(table[0].length <= 1) return;
 
-      const {
-        table: prevTable,
-        index: {
-          currentRowInd: prevCurrentRowInd,
-          currentColumnInd: prevCurrentColumnInd
-        }} = prevState;
+    const tableArr = table.map((item) => {
+      return item.filter((el, j) => {
+        return j !== currentColumnInd;
+      })
+    });
 
-      if(prevTable[0].length <= 1) return prevState;
+    const newCurrentColumnInd =
+      (tableArr[0].length === currentColumnInd)
+        ? currentColumnInd - 1
+        : currentColumnInd;
 
-      const tableArr = prevTable.map((item) => {
-        return item.filter((el, j) => {
-          return j !== prevCurrentColumnInd;
-        })
-      });
-
-      return {
-        table: [...tableArr],
-        visibility: {
-          rowShow: false,
-          columnShow: (tableArr[0].length > 1)
-        },
-        index: {
-          currentRowInd: prevCurrentRowInd,
-          currentColumnInd:
-            (tableArr[0].length === prevCurrentColumnInd)
-              ? prevCurrentColumnInd - 1
-              : prevCurrentColumnInd
-        }
-      }
-    })
+    this.setState({
+      table: [...tableArr],
+      columnVisibility: (tableArr[0].length > 1),
+      currentColumnInd: newCurrentColumnInd
+    });
   };
 
   mouseOver = (e) => {
     const event = e.target;
     const newRowIndex = event.parentElement.rowIndex;
     const newColumnIndex = event.cellIndex;
+    const { table } = this.state;
 
     if(newRowIndex == null || newColumnIndex == null) return;
 
-    this.setState(({
-                     index: {
-                       currentRowInd: prevCurrentRowInd,
-                       currentColumnInd: prevCurrentColumnInd
-                     },
-                     table: prevTable
-                   }) => {
-      return {
-        index: {
-          currentRowInd:
-            (newRowIndex === prevCurrentRowInd)
-              ? prevCurrentRowInd
-              : newRowIndex,
-          currentColumnInd:
-            (newColumnIndex === prevCurrentColumnInd)
-              ? prevCurrentColumnInd
-              : newColumnIndex
-        },
-        visibility: {
-          rowShow: (prevTable.length > 1),
-          columnShow: (prevTable[0].length > 1)
-        }
-      }
+    this.setState({
+      currentRowInd: newRowIndex,
+      currentColumnInd: newColumnIndex,
+      rowVisibility: (table.length > 1),
+      columnVisibility: (table[0].length > 1)
     });
   };
 
   render() {
-    const { table, index, visibility } = this.state;
+    const { table, currentRowInd, currentColumnInd, rowVisibility, columnVisibility } = this.state;
+    const rowPosition = (currentRowInd + 1) * (this.cellSize + 4);
+    const columnPosition = (currentColumnInd + 1) * (this.cellSize + 4);
 
     return (
       <div className='container'  style={{padding: this.cellSize + 4}}>
@@ -162,17 +116,40 @@ class App extends Component {
           mouseOver={this.mouseOver}
         />
         <Button
-          index={index}
-          visibility={visibility}
+          buttonClass={'add-row'}
           cellSize={this.cellSize}
-          buttonAddRow={this.buttonAddRow}
-          buttonAddColumn={this.buttonAddColumn}
-          buttonRemoveRow={this.buttonRemoveRow}
-          buttonRemoveColumn={this.buttonRemoveColumn}
+          buttonClick={this.buttonAddRow}
+        />
+        <Button
+          buttonClass={'add-column'}
+          cellSize={this.cellSize}
+          propertyStyle={'top'}
+          buttonClick={this.buttonAddColumn}
+        />
+        <Button
+          buttonClass={[rowVisibility? 'visibility': '', 'remove-row'].join(' ')}
+          cellSize={this.cellSize}
+          propertyStyle={'top'}
+          valueStyle={rowPosition}
+          text={'-'}
+          buttonClick={this.buttonRemoveRow}
+        />
+        <Button
+          buttonClass={[columnVisibility? 'visibility': '', 'remove-column'].join(' ')}
+          cellSize={this.cellSize}
+          valueStyle={columnPosition}
+          text={'-'}
+          buttonClick={this.buttonRemoveColumn}
         />
       </div>
     );
   }
 }
+
+App.defaultProps = {
+  initialWidth: 5,
+  initialHeight: 5,
+  cellSize: 60
+};
 
 export default App;
