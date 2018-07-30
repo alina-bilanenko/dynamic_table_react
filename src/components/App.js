@@ -179,9 +179,9 @@ class App extends Component {
 }
 
 App.defaultProps = {
-  initialWidth: 5,
-  initialHeight: 5,
-  cellSize: 60
+  initialWidth: 4,
+  initialHeight: 4,
+  cellSize: 50
 };
 
 export default App;
