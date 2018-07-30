@@ -32,7 +32,6 @@ class App extends Component {
 
   buttonAddRow = () => {
     const { table } = this.state;
-    const cellArray = [];
 
     const newId = table.reduce((prev, cur) =>  {
       return (prev.id > cur.id)? prev: cur;
