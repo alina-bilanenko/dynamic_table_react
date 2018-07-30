@@ -33,15 +33,12 @@ class App extends Component {
   buttonAddRow = () => {
     const { table } = this.state;
     const cellArray = [];
+
     const newId = table.reduce((prev, cur) =>  {
       return (prev.id > cur.id)? prev: cur;
     });
 
-    for (let j = 0; j < table[0].tableArr.length; j++) {
-      cellArray.push(j);
-    }
-
-    const newTable = [...table, { id: newId.id + 1, tableArr: [...cellArray] }];
+    const newTable = [...table, { id: newId.id + 1, tableArr: table[0].tableArr.concat() }];
 
     this.setState({ table: [...newTable] });
   };
@@ -49,11 +46,14 @@ class App extends Component {
   buttonAddColumn = () => {
     const { table } = this.state;
     let newId = 0;
+
     const newTable = table.map((item) => {
       const itemId = item.tableArr.reduce((prev, cur) =>  {
         return (prev.id > cur.id)? prev: cur;
       });
+
       newId = (itemId > newId)? itemId: newId;
+
       return {...item, tableArr: [...item.tableArr, newId + 1]}
     });
 
@@ -66,7 +66,7 @@ class App extends Component {
 
     if (table.length <= 1) return;
 
-    const newTable = table.filter((item, i) => {
+    const newTable = table.filter((item) => {
       return item.id !== currentRowId;
     });
 
