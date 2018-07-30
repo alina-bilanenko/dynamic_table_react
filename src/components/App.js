@@ -10,103 +10,136 @@ class App extends Component {
     this.cellSize = props.cellSize;
     this.state = {
       table: this.buildTableArray(),
-      currentRowInd: 0,
-      currentColumnInd: 0,
+      currentRowId: 0,
+      currentColumnId: 0,
       rowVisibility: false,
       columnVisibility: false
     }
   }
 
   buildTableArray () {
-    let tableArr = [];
+    let newTable = [];
 
     for(let i = 0; i < this.initialHeight; i++) {
-      tableArr.push(Array(this.initialWidth).fill(null));
+      let tdArray = [];
+      for (let j = 0; j < this.initialWidth; j++) {
+        tdArray.push(j);
+      }
+      newTable.push({ id: i, tableArr: [...tdArray] });
     }
-
-    return [...tableArr];
+    return [...newTable];
   }
 
   buttonAddRow = () => {
     const { table } = this.state;
-    const tableArr = [...table, Array(table[0].length).fill(null)];
+    const cellArray = [];
+    const newId = table.reduce((prev, cur) =>  {
+      return (prev.id > cur.id)? prev: cur;
+    });
 
-    this.setState({ table: [...tableArr] });
+    for (let j = 0; j < table[0].tableArr.length; j++) {
+      cellArray.push(j);
+    }
+
+    const newTable = [...table, { id: newId.id + 1, tableArr: [...cellArray] }];
+
+    this.setState({ table: [...newTable] });
   };
 
   buttonAddColumn = () => {
     const { table } = this.state;
-    const tableArr = table.map((item) => {
-      return [...item, null]
+    let newId = 0;
+    const newTable = table.map((item) => {
+      const itemId = item.tableArr.reduce((prev, cur) =>  {
+        return (prev.id > cur.id)? prev: cur;
+      });
+      newId = (itemId > newId)? itemId: newId;
+      return {...item, tableArr: [...item.tableArr, newId + 1]}
     });
 
-    this.setState({ table: [...tableArr] });
+    this.setState({ table: [...newTable] });
   };
 
   buttonRemoveRow = () => {
-    const { table, currentRowInd } = this.state;
+    const { table, currentRowId } = this.state;
+    const prevRowId = this.getIndexRow();
 
     if (table.length <= 1) return;
 
-    const tableArr = table.filter((item, i) => {
-      return i !== currentRowInd;
+    const newTable = table.filter((item, i) => {
+      return item.id !== currentRowId;
     });
 
-    const newCurrentRowInd =
-      (tableArr.length === currentRowInd)
-        ? currentRowInd - 1
-        : currentRowInd;
+    const newCurrentRowId =
+      (newTable.length === prevRowId)
+        ? newTable[prevRowId - 1].id
+        : newTable[prevRowId].id;
 
     this.setState({
-      table: [...tableArr],
-      rowVisibility: (tableArr.length > 1),
-      currentRowInd: newCurrentRowInd
+      table: [...newTable],
+      rowVisibility: (newTable.length > 1),
+      currentRowId: newCurrentRowId
     });
   };
 
   buttonRemoveColumn = () => {
-    const { table, currentColumnInd } = this.state;
+    const { table, currentColumnId } = this.state;
+    const prevColumnId = this.getIndexColumn();
 
-    if(table[0].length <= 1) return;
+    if(table[0].tableArr.length <= 1) return;
 
-    const tableArr = table.map((item) => {
-      return item.filter((el, j) => {
-        return j !== currentColumnInd;
-      })
+    const newTable = table.map((item) => {
+      const newCell = item.tableArr.filter((el) => {
+        return el !== currentColumnId;
+      });
+      return {...item, tableArr: [...newCell]}
     });
 
-    const newCurrentColumnInd =
-      (tableArr[0].length === currentColumnInd)
-        ? currentColumnInd - 1
-        : currentColumnInd;
+    const newCurrentColumnId =
+      (newTable[0].tableArr.length === prevColumnId)
+        ? newTable[0].tableArr[prevColumnId - 1]
+        : newTable[0].tableArr[prevColumnId];
 
     this.setState({
-      table: [...tableArr],
-      columnVisibility: (tableArr[0].length > 1),
-      currentColumnInd: newCurrentColumnInd
+      table: [...newTable],
+      columnVisibility: (newTable[0].tableArr.length > 1),
+      currentColumnId: newCurrentColumnId
     });
   };
 
   mouseOver = (e) => {
     const event = e.target;
-    const newRowIndex = event.parentElement.rowIndex;
-    const newColumnIndex = event.cellIndex;
+    const newRowId = event.parentElement.rowIndex;
+    const newColumnId = event.cellIndex;
     const { table } = this.state;
 
-    if(newRowIndex == null || newColumnIndex == null) return;
+    if(newRowId == null || newColumnId == null) return;
+
+    const rowId = table[newRowId].id;
+    const cellId = table[newRowId].tableArr[newColumnId];
 
     this.setState({
-      currentRowInd: newRowIndex,
-      currentColumnInd: newColumnIndex,
+      currentRowId: rowId,
+      currentColumnId: cellId,
       rowVisibility: (table.length > 1),
-      columnVisibility: (table[0].length > 1)
+      columnVisibility: (table[0].tableArr.length > 1)
     });
   };
 
+  getIndexRow = () => {
+    const { table, currentRowId } = this.state;
+    return (table.findIndex(item => item.id === currentRowId))
+  };
+
+  getIndexColumn = () => {
+    const { table, currentColumnId } = this.state;
+    return (table[0].tableArr.indexOf(currentColumnId))
+  };
+
   render() {
-    const { table, currentRowInd, currentColumnInd, rowVisibility, columnVisibility } = this.state;
-    const rowPosition = (currentRowInd + 1) * (this.cellSize + 4);
-    const columnPosition = (currentColumnInd + 1) * (this.cellSize + 4);
+    const { table, rowVisibility, columnVisibility } = this.state;
+    const rowPosition = (this.getIndexRow() + 1) * (this.cellSize + 4);
+    const columnPosition = (this.getIndexColumn() + 1) * (this.cellSize + 4);
 
     return (
       <div className='container'  style={{padding: this.cellSize + 4}}>

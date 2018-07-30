@@ -6,10 +6,10 @@ export const DynamicTable = ({ cellSize, table, mouseOver }) => {
   return (
     <table className="table" onMouseOver={mouseOver}>
       <tbody>
-      {table.map((item, key) => (
-        <tr key={key} className="row">
-          {item.map((el, i) => (
-            <td key={i}
+      {table.map((item) => (
+        <tr key={item.id} className="row">
+          {item.tableArr.map((el) => (
+            <td key={el}
                 style={{
                   width: cellSize,
                   height: cellSize
@@ -26,6 +26,6 @@ export const DynamicTable = ({ cellSize, table, mouseOver }) => {
 
 DynamicTable.propTypes = {
   cellSize: PropTypes.number,
-  table: PropTypes.arrayOf(PropTypes.array),
+  table: PropTypes.arrayOf(PropTypes.object),
   mouseOver: PropTypes.func
 };

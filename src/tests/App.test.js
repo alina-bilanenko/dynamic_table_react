@@ -2,16 +2,16 @@ import React from 'react'
 import { shallow, mount } from 'enzyme'
 import App from '../components/App'
 
-describe('App.componentDidMount', () => {
-  it('Should add new table to state table, rows table = initialWidth, columns table = initialHeight', () => {
+describe('App.buildTableArray', () => {
+  it('Should create new table, rows table = initialWidth, columns table = initialHeight', () => {
     const wrapper = mount(<App/>);
     const instance = wrapper.instance();
 
-    instance.componentDidMount();
+    instance.buildTableArray();
 
     expect(instance.state.table.length).toBe(instance.initialHeight);
     instance.state.table.forEach(tableRow => {
-      expect(tableRow.length).toBe(instance.initialWidth);
+      expect(tableRow.tableArr.length).toBe(instance.initialWidth);
     });
   })
 });
@@ -37,7 +37,7 @@ describe('App.buttonAddColumn', () => {
     instance.buttonAddColumn();
 
     instance.state.table.forEach(tableRow => {
-      expect(tableRow.length).toBe(resultColumns);
+      expect(tableRow.tableArr.length).toBe(resultColumns);
     });
   })
 });
@@ -47,21 +47,30 @@ describe('App.buttonRemoveRow', () => {
     const wrapper = shallow(<App/>);
     const instance = wrapper.instance();
     const resultlRows = instance.initialHeight - 1;
+    const rowDeleteId = instance.state.currentRowId;
 
     instance.buttonRemoveRow();
 
     expect(instance.state.table.length).toBe(resultlRows);
+
+    instance.state.table.forEach(tableRow => {
+      expect(tableRow.id).not.toBe(rowDeleteId);
+    });
   });
 
   it('Should not remove row from the state table if it is left alone', () => {
-    const wrapper = shallow(<App/>);
+    const wrapper = shallow(<App initialWidth={4}
+                                 initialHeight={1}
+    />);
     const instance = wrapper.instance();
-    instance.initialHeight = 1;
+    const rowDeleteId = instance.state.currentRowId;
 
-    instance.componentDidMount();
     instance.buttonRemoveRow();
-
     expect(instance.state.table.length).toBe(1);
+
+    instance.state.table.forEach(tableRow => {
+      expect(tableRow.id).toBe(rowDeleteId);
+    });
   })
 });
 
@@ -70,25 +79,28 @@ describe('App.buttonRemoveColumn', () => {
     const wrapper = shallow(<App/>);
     const instance = wrapper.instance();
     const resultColumns = instance.initialWidth - 1;
+    const columnDeleteId = instance.state.currentColumnId;
 
     instance.buttonRemoveColumn();
 
     instance.state.table.forEach(tableRow => {
-      expect(tableRow.length).toBe(resultColumns);
+      expect(tableRow.tableArr.length).toBe(resultColumns);
+      expect(tableRow.tableArr.indexOf(columnDeleteId)).toBe(-1);
     });
   });
 
   it('Should not remove column from the state table if it is left alone', () => {
-    const wrapper = shallow(<App/>);
+    const wrapper = shallow(<App initialWidth={1}
+                                 initialHeight={4}
+    />);
     const instance = wrapper.instance();
-    instance.initialWidth = 1;
+    const columnDeleteId = instance.state.currentColumnId;
 
-    instance.componentDidMount();
     instance.buttonRemoveColumn();
 
     instance.state.table.forEach(tableRow => {
-      expect(tableRow.length).toBe(1);
+      expect(tableRow.tableArr.length).toBe(1);
+      expect(tableRow.tableArr.indexOf(columnDeleteId)).not.toBe(-1);
     });
-
   })
 });
