@@ -16,12 +16,23 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "precommit": "lint-staged",
+    "prettier": "prettier --single-quote --use-tabs --trailing-comma es5 --write \"src/**/*.js\""
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "prettier --single-quote --use-tabs --trailing-comma es5 --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "gh-pages": "^1.2.0"
+    "gh-pages": "^1.2.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
+    "prettier": "1.14.0"
   },
   "homepage": "https://alina-bilanenko.github.io/dynamic_table_react_production"
 }
