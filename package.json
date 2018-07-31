@@ -18,11 +18,11 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "precommit": "lint-staged",
-    "prettier": "prettier --single-quote --use-tabs --trailing-comma es5 --write \"src/**/*.js\""
+    "prettier": "prettier --single-quote --trailing-comma es5 --write \"src/**/*.js\""
   },
   "lint-staged": {
     "src/**/*.js": [
-      "prettier --single-quote --use-tabs --trailing-comma es5 --write",
+      "prettier --single-quote --trailing-comma es5 --write",
       "git add"
     ]
   },
