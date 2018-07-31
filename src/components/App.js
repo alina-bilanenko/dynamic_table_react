@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { DynamicTable } from "./DynamicTable"
 import { Button } from "./Button"
+import classNames from 'classnames'
 
 class App extends Component {
   constructor (props) {
@@ -159,7 +160,7 @@ class App extends Component {
           buttonClick={this.buttonAddColumn}
         />
         <Button
-          buttonClass={[rowVisibility? 'visibility': '', 'remove-row'].join(' ')}
+          buttonClass={classNames('remove-row', {visibility: rowVisibility})}
           cellSize={this.cellSize}
           propertyStyle={'top'}
           valueStyle={rowPosition}
@@ -167,7 +168,7 @@ class App extends Component {
           buttonClick={this.buttonRemoveRow}
         />
         <Button
-          buttonClass={[columnVisibility? 'visibility': '', 'remove-column'].join(' ')}
+          buttonClass={classNames('remove-column', {visibility: columnVisibility})}
           cellSize={this.cellSize}
           valueStyle={columnPosition}
           text={'-'}
@@ -179,9 +180,9 @@ class App extends Component {
 }
 
 App.defaultProps = {
-  initialWidth: 5,
-  initialHeight: 5,
-  cellSize: 60
+  initialWidth: 4,
+  initialHeight: 4,
+  cellSize: 50
 };
 
 export default App;
